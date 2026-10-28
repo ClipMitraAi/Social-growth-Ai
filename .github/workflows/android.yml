@@ -23,9 +23,21 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Android SDK Environment & Accept Licenses
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+          
+          # Accept all SDK licenses automatically
+          yes | sdkmanager --licenses 2>/dev/null || true
+          
+          # Ensure platform 34 and build-tools 34.0.0 are ready
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" 2>/dev/null || true
 
       - name: Install Web Dependencies & Build Assets
         run: |
