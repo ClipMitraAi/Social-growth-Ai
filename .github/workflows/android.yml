@@ -31,21 +31,14 @@ jobs:
         run: |
           npm ci || npm install
           npm run build
+          npx cap sync android
 
       - name: Grant Execute Permission to Gradle
-        run: |
-          if [ -f "android/gradlew" ]; then
-            chmod +x android/gradlew
-          fi
+        run: chmod +x android/gradlew
 
       - name: Assemble Android Debug APK
         working-directory: android
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --stacktrace
-          else
-            gradle assembleDebug --stacktrace || echo "Gradle wrapper or toolchain configured for Android Studio export"
-          fi
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Locate and Archive Debug APK Artifact
         uses: actions/upload-artifact@v4

@@ -65,17 +65,17 @@ class PlatformRegistry {
   /**
    * Performs audit with in-memory caching (5 minutes) and error handling
    */
-  async audit(platform: PlatformType, handleOrUrl: string): Promise<ProfileAuditResult> {
+  async audit(platform: PlatformType, handleOrUrl: string, customApiKey?: string): Promise<ProfileAuditResult> {
     const adapter = this.getAdapter(platform);
     const cleanHandle = adapter.extractHandle(handleOrUrl);
-    const cacheKey = `${platform}:${cleanHandle.toLowerCase()}`;
+    const cacheKey = `${platform}:${cleanHandle.toLowerCase()}:${customApiKey ? 'custom' : 'default'}`;
 
     const cached = this.auditCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) {
       return cached.result;
     }
 
-    const result = await adapter.auditProfile(cleanHandle);
+    const result = await adapter.auditProfile(cleanHandle, customApiKey);
 
     // Cache for 5 minutes
     this.auditCache.set(cacheKey, {

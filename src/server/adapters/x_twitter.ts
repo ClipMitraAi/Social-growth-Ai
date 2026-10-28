@@ -35,14 +35,14 @@ export class XTwitterAdapter extends BasePlatformAdapter {
     return { isValid: true };
   }
 
-  async auditProfile(handleOrUrl: string): Promise<ProfileAuditResult> {
+  async auditProfile(handleOrUrl: string, customApiKey?: string): Promise<ProfileAuditResult> {
     const handle = this.extractHandle(handleOrUrl);
     const validation = this.validateHandle(handle);
     if (!validation.isValid) {
       throw new Error(validation.error || 'Invalid X/Twitter handle');
     }
 
-    const hasRealCredentials = this.isApiConfigured();
+    const hasRealCredentials = Boolean(customApiKey) || this.isApiConfigured();
     const seed = this.stringToHash(handle);
 
     const followers = (seed % 480000) + 8400;

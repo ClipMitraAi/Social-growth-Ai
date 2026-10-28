@@ -35,14 +35,14 @@ export class InstagramAdapter extends BasePlatformAdapter {
     return { isValid: true };
   }
 
-  async auditProfile(handleOrUrl: string): Promise<ProfileAuditResult> {
+  async auditProfile(handleOrUrl: string, customApiKey?: string): Promise<ProfileAuditResult> {
     const handle = this.extractHandle(handleOrUrl);
     const validation = this.validateHandle(handle);
     if (!validation.isValid) {
       throw new Error(validation.error || 'Invalid Instagram handle');
     }
 
-    const hasRealCredentials = this.isApiConfigured();
+    const hasRealCredentials = Boolean(customApiKey) || this.isApiConfigured();
 
     // If real credentials existed, we would execute an authorized call to Graph API:
     // fetch(`https://graph.facebook.com/v19.0/${userId}?fields=...&access_token=${token}`)

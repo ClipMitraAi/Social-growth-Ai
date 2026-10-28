@@ -8,7 +8,9 @@ import { SavedProfiles } from './components/SavedProfiles.tsx';
 import { AdminPortal } from './components/AdminPortal.tsx';
 import { AuthModal } from './components/AuthModal.tsx';
 import { SettingsModal } from './components/SettingsModal.tsx';
+import { ApiKeysModal } from './components/ApiKeysModal.tsx';
 import { api, getStoredToken } from './services/api.ts';
+import { getCustomKeys } from './services/customKeys.ts';
 import {
   User,
   UsageQuota,
@@ -44,6 +46,7 @@ export default function App() {
   // Modals & Feedback
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
+  const [apiKeysModalOpen, setApiKeysModalOpen] = React.useState(false);
   const [settingsTab, setSettingsTab] = React.useState<'settings' | 'android'>('settings');
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
@@ -227,6 +230,7 @@ export default function App() {
           setSettingsTab('android');
           setSettingsModalOpen(true);
         }}
+        onOpenApiKeys={() => setApiKeysModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -341,6 +345,13 @@ export default function App() {
               GDPR Privacy Export
             </button>
             <span>•</span>
+            <button
+              onClick={() => setApiKeysModalOpen(true)}
+              className="text-amber-400 hover:text-amber-300 font-semibold transition-colors"
+            >
+              🔑 Configure My API Keys
+            </button>
+            <span>•</span>
             <span className="text-emerald-400/90 font-medium">100% Organic Platform Compliance</span>
           </div>
         </div>
@@ -351,6 +362,12 @@ export default function App() {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         onSuccess={handleAuthSuccess}
+      />
+
+      <ApiKeysModal
+        isOpen={apiKeysModalOpen}
+        onClose={() => setApiKeysModalOpen(false)}
+        onKeysSaved={() => showToast('API Keys saved and activated on this device!')}
       />
 
       <SettingsModal

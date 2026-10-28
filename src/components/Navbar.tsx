@@ -12,6 +12,7 @@ import {
   Crown,
   ChevronDown,
   Layers,
+  KeyRound,
 } from 'lucide-react';
 import { User, UsageQuota } from '../types.ts';
 
@@ -24,6 +25,7 @@ interface NavbarProps {
   onLogout: () => void;
   onOpenSettings: () => void;
   onOpenAndroidInfo: () => void;
+  onOpenApiKeys: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
   onOpenSettings,
   onOpenAndroidInfo,
+  onOpenApiKeys,
 }) => {
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
 
@@ -122,6 +125,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
+          {/* My API Keys Button */}
+          <button
+            onClick={onOpenApiKeys}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-indigo-500/20 hover:from-amber-500/30 hover:to-indigo-500/30 text-amber-300 border border-amber-500/30 shadow-sm transition-all"
+            title="Configure personal Gemini AI key, custom server URL, and platform tokens"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+            <span>My API Keys</span>
+          </button>
+
           {/* Android APK Button */}
           <button
             onClick={onOpenAndroidInfo}
@@ -170,11 +183,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <button
+                    onClick={onOpenApiKeys}
+                    className="w-full text-left px-4 py-2 hover:bg-slate-800 text-amber-300 hover:text-amber-200 flex items-center gap-2"
+                  >
+                    <KeyRound className="w-4 h-4 text-amber-400" />
+                    <span>My API Keys &amp; Mobile Setup</span>
+                  </button>
+
+                  <button
                     onClick={onOpenSettings}
                     className="w-full text-left px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"
                   >
                     <UserIcon className="w-4 h-4 text-slate-400" />
-                    <span>Settings & Quotas</span>
+                    <span>Settings &amp; Quotas</span>
                   </button>
 
                   <button

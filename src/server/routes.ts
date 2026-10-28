@@ -246,7 +246,8 @@ apiRouter.post('/profiles/audit', rateLimitGuard(true), optionalAuthMiddleware, 
 
     // Auto-detect platform or use specified
     const detected = platformRegistry.detectPlatformAndHandle(input, explicitPlatform as PlatformType);
-    const auditResult = await platformRegistry.audit(detected.platform, detected.handle);
+    const customApiKey = (req.headers['x-custom-platform-key'] as string) || (req.headers['x-custom-youtube-key'] as string) || req.body.customApiKey;
+    const auditResult = await platformRegistry.audit(detected.platform, detected.handle, customApiKey);
 
     db.logAuditEvent({
       userId,
@@ -337,6 +338,7 @@ apiRouter.post('/ai/generate', rateLimitGuard(true), optionalAuthMiddleware, asy
       }
     }
 
+    const customApiKey = (req.headers['x-custom-gemini-key'] as string) || req.body.customApiKey;
     const result = await aiContentService.generate({
       platform: platform || 'instagram',
       niche,
@@ -345,7 +347,7 @@ apiRouter.post('/ai/generate', rateLimitGuard(true), optionalAuthMiddleware, asy
       tone: tone || 'Engaging and educational',
       language: language || 'en',
       contentType,
-    });
+    }, customApiKey);
 
     db.logAuditEvent({
       userId,

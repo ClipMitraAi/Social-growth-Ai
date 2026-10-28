@@ -16,10 +16,10 @@ export abstract class BasePlatformAdapter {
   abstract validateHandle(handle: string): { isValid: boolean; error?: string };
 
   /**
-   * Fetches profile audit. If real credentials exist in process.env, uses authorized API.
+   * Fetches profile audit. If real credentials exist in process.env or provided by user, uses authorized API.
    * Otherwise falls back gracefully to clearly labeled Demo Mode with synthetic realistic data.
    */
-  abstract auditProfile(handleOrUrl: string): Promise<ProfileAuditResult>;
+  abstract auditProfile(handleOrUrl: string, customApiKey?: string): Promise<ProfileAuditResult>;
 
   /**
    * Checks if official API credentials exist for this platform in env

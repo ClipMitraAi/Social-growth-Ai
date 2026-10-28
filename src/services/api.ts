@@ -10,6 +10,9 @@ import {
   PlatformType,
 } from '../types.ts';
 
+import { getCustomKeys } from './customKeys.ts';
+import { GoogleGenAI } from '@google/genai';
+
 const TOKEN_KEY = 'sga_session_token';
 
 export function getStoredToken(): string | null {
@@ -26,6 +29,7 @@ export function setStoredToken(token: string | null): void {
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getStoredToken();
+  const customKeys = getCustomKeys();
   const headers = new Headers(options.headers || {});
   
   headers.set('Content-Type', 'application/json');
@@ -33,7 +37,26 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const response = await fetch(endpoint, {
+  // Attach user's custom API keys so backend can utilize them
+  if (customKeys.geminiApiKey) {
+    headers.set('x-custom-gemini-key', customKeys.geminiApiKey.trim());
+  }
+  if (customKeys.youtubeApiKey) {
+    headers.set('x-custom-youtube-key', customKeys.youtubeApiKey.trim());
+    headers.set('x-custom-platform-key', customKeys.youtubeApiKey.trim());
+  }
+  if (customKeys.instagramAccessToken) {
+    headers.set('x-custom-instagram-token', customKeys.instagramAccessToken.trim());
+  }
+
+  // Resolve base URL: if user specified a custom backend URL (e.g. for APK deployment), use it
+  let url = endpoint;
+  if (customKeys.backendServerUrl && endpoint.startsWith('/api')) {
+    const base = customKeys.backendServerUrl.replace(/\/+$/, '');
+    url = `${base}${endpoint}`;
+  }
+
+  const response = await fetch(url, {
     ...options,
     headers,
   });
@@ -45,6 +68,84 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   return data as T;
+}
+
+/**
+ * Direct client-side AI generation using @google/genai.
+ * Allows the Android APK or web app to run 100% standalone if the user inputs their own Gemini API key.
+ */
+export async function directClientGenerateContent(
+  params: {
+    platform: PlatformType;
+    niche: string;
+    topic: string;
+    targetAudience: string;
+    tone: string;
+    language?: string;
+  },
+  apiKey: string
+): Promise<GeneratedContentResult> {
+  const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+  const prompt = `You are the lead social growth strategist and viral copywriter for ${params.platform}.
+Generate high-converting, organic social content for the following brief:
+- Platform: ${params.platform}
+- Niche: ${params.niche}
+- Topic: ${params.topic}
+- Target Audience: ${params.targetAudience}
+- Desired Tone: ${params.tone}
+- Language: ${params.language || 'en'}
+
+Respond ONLY with a single valid JSON object matching:
+{
+  "captions": [
+    {"label": "Punchy Hook", "text": "...", "characterCount": 120},
+    {"label": "Storytelling & Value", "text": "...", "characterCount": 280},
+    {"label": "Direct Question / Engagement", "text": "...", "characterCount": 160}
+  ],
+  "hashtags": {
+    "recommended": ["#tag1", "#tag2", "#tag3"],
+    "highReach": ["#broad1", "#broad2"],
+    "nicheSpecific": ["#niche1", "#niche2", "#niche3"]
+  },
+  "videoHooks": [
+    {"type": "Contrarian / Curiosity", "hook": "...", "explanation": "..."},
+    {"type": "Pain Point & Solution", "hook": "...", "explanation": "..."},
+    {"type": "Immediate Demonstration", "hook": "...", "explanation": "..."}
+  ],
+  "videoScript": {
+    "duration": "30-45 seconds",
+    "hook": "...",
+    "bodyPoints": [
+      {"timecode": "0:00 - 0:03", "visualCue": "...", "spokenAudio": "..."},
+      {"timecode": "0:03 - 0:25", "visualCue": "...", "spokenAudio": "..."},
+      {"timecode": "0:25 - 0:35", "visualCue": "...", "spokenAudio": "..."}
+    ],
+    "callToAction": "..."
+  },
+  "thumbnailTitles": [
+    {"title": "...", "ctrScore": 94, "thumbnailVisualDescription": "..."}
+  ],
+  "contentCalendarWeek": [
+    {"day": "Monday", "suggestedTime": "11:30 AM", "format": "Short / Reel", "angle": "...", "sampleHook": "..."}
+  ],
+  "strategicImprovements": ["..."]
+}`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.8-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      temperature: 0.7,
+    },
+  });
+
+  const parsed = JSON.parse(response.text?.trim() || '{}');
+  return {
+    ...parsed,
+    providerUsed: 'gemini-3.8-flash (Direct Mobile Device Mode)',
+    isFallback: false,
+  };
 }
 
 export const api = {
@@ -128,10 +229,31 @@ export const api = {
     tone: string;
     language?: string;
   }) {
-    return request<{ success: boolean; data: GeneratedContentResult }>('/api/ai/generate', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    });
+    const customKeys = getCustomKeys();
+    
+    // If user explicitly configured direct client mode and provided key, call Gemini directly on device
+    if (customKeys.useDirectClientAi && customKeys.geminiApiKey) {
+      try {
+        const directResult = await directClientGenerateContent(params, customKeys.geminiApiKey);
+        return { success: true, data: directResult };
+      } catch (clientErr) {
+        console.warn('Direct client Gemini generation failed, falling back to server request:', clientErr);
+      }
+    }
+
+    try {
+      return await request<{ success: boolean; data: GeneratedContentResult }>('/api/ai/generate', {
+        method: 'POST',
+        body: JSON.stringify(params),
+      });
+    } catch (serverErr) {
+      // If server request fails (e.g. standalone mobile APK with custom key), try direct client Gemini
+      if (customKeys.geminiApiKey) {
+        const directResult = await directClientGenerateContent(params, customKeys.geminiApiKey);
+        return { success: true, data: directResult };
+      }
+      throw serverErr;
+    }
   },
 
   async getSavedIdeas() {

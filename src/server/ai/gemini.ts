@@ -54,14 +54,16 @@ export class AiContentService {
     return Boolean(process.env.GEMINI_API_KEY);
   }
 
-  async generate(params: GenerateContentParams): Promise<GeneratedContentResult> {
+  async generate(params: GenerateContentParams, customApiKey?: string): Promise<GeneratedContentResult> {
     const { platform, niche, topic, targetAudience, tone, language = 'en' } = params;
 
     if (!topic || !niche) {
       throw new Error('Topic and niche are required for AI generation');
     }
 
-    if (this.genAI) {
+    const client = customApiKey ? new GoogleGenAI({ apiKey: customApiKey }) : this.genAI;
+
+    if (client) {
       try {
         const systemPrompt = `You are the lead social growth strategist and viral copywriter for ${platform}.
 Generate high-converting, organic social content for the following brief:
@@ -115,7 +117,7 @@ You must respond ONLY with a single valid JSON object strictly matching this sch
   ]
 }`;
 
-        const response = await this.genAI.models.generateContent({
+        const response = await client.models.generateContent({
           model: 'gemini-3.8-flash',
           contents: systemPrompt,
           config: {
