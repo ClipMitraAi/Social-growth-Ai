@@ -1,0 +1,227 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_001",
+      "email": "admin@socialgrowth.ai",
+      "name": "Elena Vance (Admin)",
+      "passwordHash": "c5a561742afa6f00c0fafc4a66b263e5:a02970c4724c8153f1bd8ceb058a2e5a98bacb7bc5399d4956759c5ec768a326acdec008095a4f6fc24b63ee662475472aa4a1278b36ade0b5e26fca89cd3038",
+      "role": "ADMIN",
+      "tier": "AGENCY",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    },
+    {
+      "id": "usr_demo_002",
+      "email": "creator@socialgrowth.ai",
+      "name": "Alex Rivera (Creator)",
+      "passwordHash": "680a7352c434991680bc27c288f0f54b:476da8c4054c71830acedadd6e28e379aa796b621bf7b0a6539c77a205a2667f27b70c5f0217348c9a858a737e480ed07927101f15217a88bc65a7f65770a52b",
+      "role": "USER",
+      "tier": "PRO",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "sess_0dfe3df69924ab94",
+      "token": "f1e5c297c655ab26431446e2c661c5cf4dba9be39fa469e96625ca2db5b4115f",
+      "userId": "usr_demo_002",
+      "expiresAt": "2026-11-04T02:52:36.450Z",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.8059.12 Safari/537.36",
+      "createdAt": "2026-10-28T02:52:36.450Z"
+    },
+    {
+      "id": "sess_f65cdf5826d243ff",
+      "token": "f893fc9f60df39d7f0742bc28230f6adb13ef44c7bce6f6d88265128172559f8",
+      "userId": "usr_demo_002",
+      "expiresAt": "2026-11-04T02:53:28.168Z",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.8059.12 Safari/537.36",
+      "createdAt": "2026-10-28T02:53:28.168Z"
+    }
+  ],
+  "connectedAccounts": [],
+  "savedProfiles": [
+    {
+      "id": "prof_ig_veritas",
+      "userId": "usr_demo_002",
+      "platform": "instagram",
+      "handle": "natgeo",
+      "profileUrl": "https://www.instagram.com/natgeo",
+      "displayName": "National Geographic",
+      "avatarUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=150&auto=format&fit=crop&q=80",
+      "bio": "Inspiring people to care about the planet since 1888.",
+      "followersCount": 283400000,
+      "followingCount": 142,
+      "postsCount": 28940,
+      "engagementRate": 1.84,
+      "notes": "Industry benchmark for visual storytelling and carousel reach.",
+      "tags": [
+        "Benchmark",
+        "Photography",
+        "Nature"
+      ],
+      "lastAuditedAt": "2026-10-28T02:43:49.346Z",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    },
+    {
+      "id": "prof_yt_mkbhd",
+      "userId": "usr_demo_002",
+      "platform": "youtube",
+      "handle": "mkbhd",
+      "profileUrl": "https://www.youtube.com/@mkbhd",
+      "displayName": "Marques Brownlee",
+      "avatarUrl": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      "bio": "Quality Tech Videos | YouTuber | Geek | Consumer Electronics",
+      "followersCount": 18500000,
+      "followingCount": 0,
+      "postsCount": 1680,
+      "engagementRate": 3.42,
+      "notes": "Gold standard for YouTube titles, thumbnails, and retention.",
+      "tags": [
+        "Tech",
+        "Competitor",
+        "YouTube"
+      ],
+      "lastAuditedAt": "2026-10-28T02:43:49.346Z",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    }
+  ],
+  "analyticsSnapshots": [],
+  "contentIdeas": [
+    {
+      "id": "idea_1",
+      "userId": "usr_demo_002",
+      "platform": "instagram",
+      "niche": "AI & SaaS Growth",
+      "topic": "How to gain your first 1,000 real followers without paying for ads",
+      "title": "The Organic Playbook: 0 to 1,000 Engaged Followers",
+      "hook": "Stop buying ads for a dead account. Here is the exact organic formula that works in 2026.",
+      "script": "Hook (0-3s): Show analytics screen. Body (3-25s): 1. Value-first carousels. 2. Replying to niche peers within 15 mins. 3. Re-hooking existing posts. CTA (25-30s): Comment \"GROWTH\" for the checklist.",
+      "captions": [
+        "Organic growth is not dead—it just requires higher signal-to-noise ratio."
+      ],
+      "hashtags": [
+        "#organicgrowth",
+        "#socialmediatips",
+        "#contentstrategy"
+      ],
+      "score": 94,
+      "isFavorited": true,
+      "createdAt": "2026-10-28T02:43:49.346Z"
+    }
+  ],
+  "calendarEntries": [
+    {
+      "id": "cal_entry_1",
+      "userId": "usr_demo_002",
+      "platform": "instagram",
+      "scheduledTime": "2026-10-29T02:43:49.456Z",
+      "caption": "3 AI tools that will save you 15 hours every week as a developer. Bookmark this before you start your next sprint! 🚀",
+      "hashtags": [
+        "#ai",
+        "#developer",
+        "#productivity",
+        "#techtools",
+        "#buildinpublic"
+      ],
+      "mediaType": "carousel",
+      "status": "SCHEDULED",
+      "reminderSent": false,
+      "notes": "Slides 1-5 designed in Figma. Emphasize step 2.",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    },
+    {
+      "id": "cal_entry_2",
+      "userId": "usr_demo_002",
+      "platform": "youtube",
+      "scheduledTime": "2026-10-30T02:43:49.456Z",
+      "caption": "Full Breakdown: Why 90% of Social Media Algorithms Changed in 2026 and How to Adapt Organically.",
+      "hashtags": [
+        "#youtubecreators",
+        "#algorithm",
+        "#socialgrowth"
+      ],
+      "mediaType": "video",
+      "status": "DRAFT",
+      "reminderSent": false,
+      "notes": "Record intro hook with dual camera setup.",
+      "createdAt": "2026-10-28T02:43:49.346Z",
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    }
+  ],
+  "userPreferences": [
+    {
+      "id": "pref_demo_002",
+      "userId": "usr_demo_002",
+      "defaultPlatform": "instagram",
+      "contentNiche": "Tech & AI Insights",
+      "targetAudience": "Software engineers, designers, startup founders",
+      "preferredTone": "Authoritative, engaging, high-energy",
+      "language": "en",
+      "emailNotifications": true,
+      "darkTheme": true,
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    }
+  ],
+  "usageQuotas": [
+    {
+      "id": "q_admin_001",
+      "userId": "usr_admin_001",
+      "dateReset": "2026-10-28T02:43:49.346Z",
+      "auditCount": 2,
+      "maxAudits": 500,
+      "aiGenerationCount": 4,
+      "maxAiGenerations": 500,
+      "exportCount": 0,
+      "maxExports": 100,
+      "updatedAt": "2026-10-28T02:43:49.346Z"
+    },
+    {
+      "id": "q_demo_002",
+      "userId": "usr_demo_002",
+      "dateReset": "2026-10-28T02:43:49.346Z",
+      "auditCount": 4,
+      "maxAudits": 50,
+      "aiGenerationCount": 6,
+      "maxAiGenerations": 50,
+      "exportCount": 1,
+      "maxExports": 10,
+      "updatedAt": "2026-10-28T02:52:56.057Z"
+    }
+  ],
+  "auditEvents": [
+    {
+      "userId": "usr_demo_002",
+      "action": "AUDIT_PROFILE",
+      "resource": "instagram:natgeo",
+      "ipAddress": "127.0.0.1",
+      "status": "success",
+      "details": {
+        "platform": "instagram",
+        "handle": "natgeo",
+        "followers": 33568,
+        "engagementRate": 2.41
+      },
+      "id": "audit_b4e8187c1cf196a3",
+      "timestamp": "2026-10-28T02:52:56.062Z"
+    },
+    {
+      "id": "audit_init",
+      "userId": "usr_admin_001",
+      "action": "SYSTEM_BOOT",
+      "resource": "system",
+      "ipAddress": "127.0.0.1",
+      "status": "success",
+      "details": {
+        "version": "1.0.0",
+        "initialized": true
+      },
+      "timestamp": "2026-10-28T02:43:49.346Z"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Social Growth AI",
+  "description": "Production-grade social media analytics, public profile audits, and AI-powered organic growth platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,224 @@
+// Prisma Schema for Social Growth AI
+// Compatible with PostgreSQL database
+// Run `npx prisma migrate dev` or `npx prisma db push` to synchronize with your database.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PlanTier {
+  FREE
+  PRO
+  AGENCY
+}
+
+enum CalendarStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id               String              @id @default(uuid())
+  email            String              @unique
+  name             String
+  passwordHash     String
+  role             Role                @default(USER)
+  tier             PlanTier            @default(FREE)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  
+  sessions         Session[]
+  connectedAccounts ConnectedAccount[]
+  savedProfiles    SavedProfile[]
+  contentIdeas     ContentIdea[]
+  calendarEntries  CalendarEntry[]
+  userPreferences  UserPreference?
+  usageQuota       UsageQuota?
+  auditEvents      AuditEvent[]
+
+  @@index([email])
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  token        String    @unique
+  userId       String
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime  @default(now())
+  
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model ConnectedAccount {
+  id             String    @id @default(uuid())
+  userId         String
+  platform       String    // instagram, youtube, tiktok, facebook, x_twitter
+  platformUserId String
+  handle         String
+  profileUrl     String?
+  avatarUrl      String?
+  tokenEncrypted String?   // Server-side encrypted OAuth token if connected
+  tokenExpiresAt DateTime?
+  status         String    @default("active") // active, revoked, expired
+  lastSyncedAt   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform, platformUserId])
+  @@index([userId])
+}
+
+model SavedProfile {
+  id             String              @id @default(uuid())
+  userId         String
+  platform       String
+  handle         String
+  profileUrl     String
+  displayName    String
+  avatarUrl      String?
+  bio            String?
+  followersCount Int                 @default(0)
+  followingCount Int                 @default(0)
+  postsCount     Int                 @default(0)
+  engagementRate Float               @default(0.0)
+  notes          String?
+  tags           String[]            @default([])
+  lastAuditedAt  DateTime            @default(now())
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshots      AnalyticsSnapshot[]
+
+  @@unique([userId, platform, handle])
+  @@index([userId])
+  @@index([platform, handle])
+}
+
+model AnalyticsSnapshot {
+  id             String        @id @default(uuid())
+  profileId      String
+  platform       String
+  handle         String
+  recordedAt     DateTime      @default(now())
+  period         String        @default("daily") // daily, weekly, monthly
+  followers      Int
+  views          Int?
+  likes          Int?
+  comments       Int?
+  engagementRate Float
+  metricsJson    Json          // Full normalized metric dictionary including raw data source & disclaimer
+
+  profile        SavedProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([platform, handle])
+  @@index([recordedAt])
+}
+
+model ContentIdea {
+  id          String    @id @default(uuid())
+  userId      String
+  platform    String
+  niche       String
+  topic       String
+  title       String
+  hook        String
+  script      String?
+  captions    String[]  @default([])
+  hashtags    String[]  @default([])
+  score       Int       @default(85)
+  isFavorited Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([platform])
+}
+
+model CalendarEntry {
+  id            String         @id @default(uuid())
+  userId        String
+  platform      String
+  scheduledTime DateTime
+  caption       String
+  hashtags      String[]       @default([])
+  mediaType     String         @default("reel") // reel, post, story, video, tweet, carousel
+  status        CalendarStatus @default(DRAFT)
+  reminderSent  Boolean        @default(false)
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([scheduledTime])
+}
+
+model UserPreference {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  defaultPlatform    String   @default("instagram")
+  contentNiche       String   @default("tech_education")
+  targetAudience     String   @default("creators_founders")
+  preferredTone      String   @default("authoritative_helpful")
+  language           String   @default("en")
+  emailNotifications Boolean  @default(true)
+  darkTheme          Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UsageQuota {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  dateReset          DateTime @default(now())
+  auditCount         Int      @default(0)
+  maxAudits          Int      @default(10) // Free tier default per day
+  aiGenerationCount  Int      @default(0)
+  maxAiGenerations   Int      @default(15) // Free tier default per day
+  exportCount        Int      @default(0)
+  maxExports         Int      @default(3)
+  updatedAt          DateTime @updatedAt
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String   // e.g. "AUTH_LOGIN", "AUDIT_PROFILE", "GENERATE_AI", "DELETE_ACCOUNT"
+  resource   String   // e.g. "profile:@socialgrowth"
+  ipAddress  String?
+  status     String   @default("success") // success, failed, throttled
+  details    Json?
+  timestamp  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
